@@ -22,7 +22,7 @@ resource "kubernetes_deployment" "app_deployment" {
 
       spec {
         container {
-          image = "seu_docker_image"
+          image = var.app_image
           name  = "app"
 
           env {
