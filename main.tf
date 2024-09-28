@@ -35,6 +35,7 @@ module "lambda" {
 module "api_gateway" {
   source = "./api_gateway"
   lambda_integration_uri = module.lambda.auth_function_invoke_arn
+  auth_function_name = module.lambda.auth_function_name
 }  
 
 module "database" {
