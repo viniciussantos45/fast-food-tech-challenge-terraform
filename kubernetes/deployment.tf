@@ -27,7 +27,7 @@ resource "kubernetes_deployment" "app_deployment" {
 
           env {
             name  = "DB_HOST"
-            value = aws_db_instance.default.address
+            value = var.db_address
           }
         }
       }

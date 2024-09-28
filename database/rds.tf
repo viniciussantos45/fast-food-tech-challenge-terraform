@@ -3,16 +3,14 @@ resource "aws_db_instance" "default" {
   engine                 = "postgres"
   engine_version         = "13.4"
   instance_class         = "db.t3.micro"
-  db_name                = "fast-food"
+  # db_name                = "fast-food"
   username               = var.db_username
   password               = var.db_password
   parameter_group_name   = "default.postgres13"
   skip_final_snapshot    = true
-  vpc_security_group_ids = [aws_security_group.db_sg.id]
-  db_subnet_group_name   = aws_db_subnet_group.main.name
-}
+  vpc_security_group_ids = var.db_sg_ids
+}   
 
-resource "aws_db_subnet_group" "main" {
-  name       = "main"
-  subnet_ids = [aws_subnet.public.id]
+output "db_address" {
+  value = aws_db_instance.default.id
 }

@@ -4,6 +4,6 @@ resource "aws_cognito_user_pool" "main" {
   schema {
     attribute_data_type = "String"
     name                = "cpf"
-    required            = true
+    # required            = true
   }
 }

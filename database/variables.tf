@@ -5,3 +5,7 @@ variable "db_username" {
 variable "db_password" {
   type = string
 }
+
+variable "db_sg_ids" {
+  type = list(string)
+}
