@@ -21,17 +21,16 @@ resource "aws_api_gateway_integration" "lambda_integration" {
   http_method             = aws_api_gateway_method.get_method.http_method
   type                    = "AWS_PROXY"
   integration_http_method = "POST"
-  uri                     = aws_lambda_function.auth_function.invoke_arn
+  uri                     = var.lambda_integration_uri
 }
 
 resource "aws_lambda_permission" "api_gateway" {
   statement_id  = "AllowAPIGatewayInvoke"
   action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.auth_function.function_name
+  function_name = var.auth_function_name
   principal     = "apigateway.amazonaws.com"
   source_arn    = "${aws_api_gateway_rest_api.auth_api.execution_arn}/*/*"
 }
-
 
 resource "aws_api_gateway_deployment" "auth_api_deployment" {
   depends_on  = [aws_api_gateway_integration.lambda_integration]

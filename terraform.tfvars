@@ -1,3 +1,5 @@
+db_name     = "fast-food"
 db_username = "fastfood"
 db_password = "jk1kfkecv0o23r0sv013lsvdl1psvl2rkmcvfbmk4werpdokbjkweijkxjgbewgj"
 app_image   = "fastfood:latest"
+jwt_secret  = "secret"

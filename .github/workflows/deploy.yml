@@ -1,37 +1,76 @@
-name: Deploy Lambda Function
+name: Deploy Infrastructure
 
 on:
   push:
     branches:
       - main
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout Lambda Repository
+        uses: actions/checkout@v4.2.0
+        with:
+          repository: viniciussantos45/fast-food-tech-challenge-lambda
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v1
+      - name: Setup Node.js
+        uses: actions/setup-node@v4.0.4
+        with:
+          node-version: "18"
+  
+      - name: Install Dependencies
+        run: |
+          cd lambda_auth
+          npm install
 
-      - name: Terraform Init
-        run: terraform init
+      - name: Zip Lambda Function
+        run: |
+          cd lambda_auth
+          zip -r ../lambda_auth.zip .
 
-      # - name: Terraform Apply
-      #   run: terraform apply -auto-approve
-      #   env:
-      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      # -----------------OR------------------
-      # - name: Terraform Plan
-      #   run: terraform plan -out=tfplan -input=false
-      #   env:
-      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4.4.0
+        with:
+          name: lambda_package
+          path: lambda_auth.zip
 
-      # - name: Terraform Apply
-      #   run: terraform apply -input=false tfplan
-      #   env:
-      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4.2.0
+
+    - name: Download Artifact
+      uses: actions/download-artifact@v4.1.8
+      with:
+        name: lambda_package
+        path: lambda/lambda_auth.zip
+
+    - name: Set up Terraform
+      uses: hashicorp/setup-terraform@v3.1.2
+
+    - name: Initialize Terraform
+      run: terraform init
+
+    - name: Validate Terraform
+      run: terraform validate
+
+    - name: Plan Terraform
+      run: terraform plan
+
+    - name: Apply Terraform
+      run: terraform apply -auto-approve
