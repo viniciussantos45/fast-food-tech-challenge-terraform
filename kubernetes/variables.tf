@@ -1,11 +1,4 @@
-variable "app_image" {
-  type = string
-} 
-
-variable "subnets" {
+variable "subnet_ids" {
   type = list(string)
 }
 
-variable "db_address" {
-  type = string
-}

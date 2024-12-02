@@ -1,0 +1,6 @@
+.envrc
+lambda_auth
+K8S
+lambda_auth_output.zip
+
+.terraform/providers/registry.terraform.io/
