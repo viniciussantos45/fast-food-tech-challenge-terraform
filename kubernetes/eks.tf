@@ -32,3 +32,7 @@ resource "aws_eks_node_group" "eks_nodegroup" {
     Name = "eks-nodegroup"
   }
 }
+
+output "cluster_endpoint" {
+  value = aws_eks_cluster.eks_cluster.endpoint
+}

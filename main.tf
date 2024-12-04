@@ -22,12 +22,10 @@ module "networking" {
   source = "./networking"
 }
 
-# module "api_gateway" {
-#   source                 = "./api_gateway"
-#   auth_function_name     = module.lambda.auth_function_name
-#   lambda_integration_uri = module.lambda.auth_function_invoke_arn
-#   aws_cognito_user_pool  = module.auth.aws_cognito_user_pool
-# }
+module "api_gateway" {
+  source           = "./api_gateway"
+  cluster_endpoint = module.kubernetes.cluster_endpoint
+}
 
 
 module "kubernetes" {
