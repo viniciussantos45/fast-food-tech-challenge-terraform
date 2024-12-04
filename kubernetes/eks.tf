@@ -1,5 +1,5 @@
 resource "aws_eks_cluster" "eks_cluster" {
-  name     = "eks-cluster"
+  name     = "eks-cluster-1"
   role_arn = "arn:aws:iam::875456072639:role/LabRole"
 
 
